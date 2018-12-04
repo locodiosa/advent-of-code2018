@@ -6,13 +6,7 @@
 		"use strict";
     
     function calc() {
-      let list = [];
-
-      input.split("\n").forEach(l => {
-        let rec = l.match(/\d+/gm).map(Number);
-        list.push(rec);
-      });
-
+      let list = input.split("\n").map(l => l.match(/\d+/gm).map(Number));
       document.getElementById("result").innerHTML = getResult(list); 
     }     
 
