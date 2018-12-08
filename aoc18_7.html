@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script>
+		"use strict";
+    
+    function calc() {
+      const steps = getSteps();
+      document.getElementById("result").innerHTML = getResult1(steps) + ", " + 
+                                                    getResult2(steps); 
+    }     
+
+    function getResult1(steps) {      
+      let order = [];
+      let waitList = [];     
+
+      while (order.length < steps.length) {
+        for (let i = 0; i < steps.length; ++i) {          
+          if (checkAvailable(steps, order, i) == true 
+                && order.indexOf(steps[i][0]) == -1 
+                && waitList.indexOf(steps[i][0]) == -1) {            
+            waitList.push(steps[i][0]);
+          }
+        }
+
+        order.push(waitList.sort()[0]);
+        waitList.splice(0, 1);
+      }  
+
+      return order.join("");    
+    }
+
+    function getResult2(steps) {
+      let order = [];
+      let waitList = [];
+      let time = 0;   
+      let sec = 0;  
+      let counter = [];
+
+      while (order.length < steps.length) {   
+        for (let i = 0; i < counter.length && i < 5; ++i) {      
+          ++counter[i][0];
+        }         
+
+        for (let i = 0; i < steps.length; ++i) {          
+          if (checkAvailable(steps, order, i) == true 
+                && order.indexOf(steps[i][0]) == -1 
+                && waitList.indexOf(steps[i][0]) == -1) {            
+            waitList.push(steps[i][0]);
+            counter.push([0, i + 60]);
+          }
+        }                
+       
+        for (let i = 0; i < waitList.length; ++i) {
+          if (counter[i][0] >= counter[i][1]) {
+            order.push(waitList[i]);
+            waitList.splice(i, 1);
+            counter.splice(i, 1);
+          }            
+        } 
+
+        ++time;                
+      }     
+
+      return time;   
+    }
+
+    function getSteps() {
+      let steps = {};
+
+      input.split("\n").forEach(l => {
+        let instr = l.split(" ");
+
+        if (steps[instr[7]] == undefined) {
+          steps[instr[7]] = [];
+        }        
+
+        steps[instr[7]].push(instr[1]);
+
+        if (steps[instr[1]] == undefined) {
+          steps[instr[1]] = [];
+        }
+      });      
+
+      return Object.keys(steps).map(key => [key, ...steps[key]]).sort();
+    }
+
+    function checkAvailable(steps, order, i) {
+      let available = true;
+
+      for (let j = 1; j < steps[i].length; ++j) {
+        if (order.indexOf(steps[i][j]) == -1) {
+          available = false;
+        }
+      }
+
+      return available;
+    }
+
+  let input = `Step B must be finished before step X can begin.
+Step V must be finished before step F can begin.
+Step K must be finished before step C can begin.
+Step S must be finished before step D can begin.
+Step C must be finished before step A can begin.
+Step H must be finished before step X can begin.
+Step Q must be finished before step W can begin.
+Step X must be finished before step F can begin.
+Step J must be finished before step R can begin.
+Step D must be finished before step O can begin.
+Step F must be finished before step P can begin.
+Step M must be finished before step Z can begin.
+Step R must be finished before step I can begin.
+Step Y must be finished before step O can begin.
+Step G must be finished before step Z can begin.
+Step Z must be finished before step P can begin.
+Step O must be finished before step L can begin.
+Step A must be finished before step P can begin.
+Step U must be finished before step L can begin.
+Step L must be finished before step W can begin.
+Step P must be finished before step W can begin.
+Step I must be finished before step W can begin.
+Step E must be finished before step N can begin.
+Step W must be finished before step N can begin.
+Step T must be finished before step N can begin.
+Step G must be finished before step E can begin.
+Step K must be finished before step T can begin.
+Step I must be finished before step T can begin.
+Step V must be finished before step H can begin.
+Step W must be finished before step T can begin.
+Step M must be finished before step A can begin.
+Step C must be finished before step W can begin.
+Step B must be finished before step Y can begin.
+Step Y must be finished before step N can begin.
+Step L must be finished before step N can begin.
+Step M must be finished before step R can begin.
+Step L must be finished before step I can begin.
+Step J must be finished before step N can begin.
+Step K must be finished before step M can begin.
+Step O must be finished before step U can begin.
+Step P must be finished before step N can begin.
+Step Y must be finished before step I can begin.
+Step V must be finished before step Q can begin.
+Step H must be finished before step R can begin.
+Step M must be finished before step P can begin.
+Step K must be finished before step L can begin.
+Step J must be finished before step A can begin.
+Step D must be finished before step F can begin.
+Step Q must be finished before step P can begin.
+Step C must be finished before step H can begin.
+Step U must be finished before step I can begin.
+Step A must be finished before step T can begin.
+Step C must be finished before step P can begin.
+Step U must be finished before step T can begin.
+Step O must be finished before step T can begin.
+Step O must be finished before step I can begin.
+Step S must be finished before step I can begin.
+Step Z must be finished before step E can begin.
+Step Y must be finished before step T can begin.
+Step K must be finished before step O can begin.
+Step O must be finished before step A can begin.
+Step Z must be finished before step T can begin.
+Step Z must be finished before step U can begin.
+Step U must be finished before step P can begin.
+Step P must be finished before step I can begin.
+Step S must be finished before step W can begin.
+Step S must be finished before step P can begin.
+Step S must be finished before step Q can begin.
+Step C must be finished before step E can begin.
+Step G must be finished before step U can begin.
+Step D must be finished before step L can begin.
+Step K must be finished before step S can begin.
+Step R must be finished before step O can begin.
+Step C must be finished before step G can begin.
+Step V must be finished before step G can begin.
+Step A must be finished before step W can begin.
+Step Z must be finished before step O can begin.
+Step J must be finished before step O can begin.
+Step F must be finished before step E can begin.
+Step U must be finished before step E can begin.
+Step E must be finished before step W can begin.
+Step M must be finished before step O can begin.
+Step C must be finished before step U can begin.
+Step G must be finished before step P can begin.
+Step C must be finished before step I can begin.
+Step Z must be finished before step A can begin.
+Step C must be finished before step J can begin.
+Step Q must be finished before step R can begin.
+Step E must be finished before step T can begin.
+Step F must be finished before step Y can begin.
+Step Z must be finished before step N can begin.
+Step I must be finished before step N can begin.
+Step X must be finished before step E can begin.
+Step I must be finished before step E can begin.
+Step Q must be finished before step O can begin.
+Step R must be finished before step L can begin.
+Step K must be finished before step W can begin.
+Step Y must be finished before step L can begin.
+Step M must be finished before step I can begin.
+Step F must be finished before step O can begin.
+Step A must be finished before step E can begin.` 
+	</script>
+</head>
+<body onload="calc()">
+  <div id="result"></div>  
+</body>
+</html>
