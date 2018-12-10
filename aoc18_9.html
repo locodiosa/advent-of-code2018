@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script>
+		"use strict";
+    
+    function calc() {
+      document.getElementById("result").innerHTML = getResult(); 
+    }     
+
+    function getResult() {
+      const [players, lastMarble] = input.match(/\d+/g);
+      let current = {value: 0, prev: null, next: null};
+      current.prev = current.next = current;
+
+      let scores = [];
+
+      for (let i = 0; i < players; ++i) {
+        scores[i] = 0;
+      }
+
+      let part1 = null;
+
+      for (let marble = 1; marble < lastMarble * 100; ++marble) {
+        if (marble % 23 == 0) {
+          let del = current.prev.prev.prev.prev.prev.prev.prev;
+          
+          del.next.prev = del.prev;
+          del.prev.next = del.next;
+          current = del.next;
+          scores[(marble - 1) % players] += marble + del.value;
+
+        } else {
+          let nextNode = current.next.next;
+          let newCurrent = {value: marble, prev: current.next, next: nextNode};
+          
+          current.next.next = newCurrent;
+          nextNode.prev = newCurrent;
+          current = newCurrent;
+        }
+
+        if (marble == lastMarble) {
+          part1 = Math.max(...scores);
+        }     
+      }     
+   
+      return  part1 + ", " + Math.max(...scores);        
+    }
+
+  let input = "455 players; last marble is worth 71223 points"; 
+	</script>
+</head>
+<body onload="calc()">
+  <div id="result"></div>  
+</body>
+</html>
