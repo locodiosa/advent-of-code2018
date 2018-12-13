@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script>
+		"use strict";
+    
+    function calc() {
+      document.getElementById("result").innerHTML = getResult(); 
+    }     
+
+    function getResult() {
+      let initial = input.split("\n")[0].match(/\.|#/g);      
+      let row = {};
+
+      for (let i = 0; i < initial.length; ++i) {
+        if (initial[i] == "#") {
+          row[i] = "#";
+        }
+      }
+      
+      let data = input.split("\n").filter(l => l.indexOf("=>") != -1);      
+      let rules = {};
+
+      for (let i = 0; i < data.length; ++i) {
+        rules[data[i].split(" => ")[0]] = data[i].split(" => ")[1];
+      }
+      
+      let gener = 0;
+      let sum = 0;
+
+      while (gener < 1000) {
+        ++ gener;
+
+        let newRow = {};
+        let min = Math.min(...Object.keys(row).map(Number));
+        let max = Math.max(...Object.keys(row).map(Number));
+
+        for (let i = min - 2; i < max + 2; ++i) {
+          let check = [];
+
+          for (let j = i - 2; j <= i + 2; ++j) {           
+            if (row[j] == undefined) {
+              check.push(".");
+            } else {
+              check.push("#");
+            }
+          }
+
+          for (let key in rules) {
+            if (key == check.join("")) {
+              if (rules[key] == "#") {
+                newRow[i] = rules[key];
+              }                            
+            } 
+          }          
+        }
+
+        row = newRow;
+
+        if (gener == 20) {
+          for (let pot in row) {
+            sum += +pot;
+          }
+        }
+      }
+
+      let sum2 = 0; 
+
+      for (let pot in row) {
+        sum2 += +pot;
+      }          
+
+      return sum + ", " + (sum2 - 55) * 500000 + 55;
+    } 
+
+const input = `initial state: ##..#..##.#....##.#..#.#.##.#.#.######..##.#.#.####.#..#...##...#....#....#.##.###..#..###...#...#..
+
+#..#. => .
+.#..# => #
+..#.# => .
+..... => .
+.#... => #
+#..## => #
+..##. => #
+#.##. => #
+#.#.# => .
+###.# => #
+.#### => .
+..### => .
+.###. => .
+#.#.. => #
+###.. => .
+##.#. => .
+##..# => .
+##.## => .
+#.### => .
+...## => #
+##... => #
+####. => .
+.#.## => .
+#...# => #
+.#.#. => #
+....# => .
+.##.. => .
+...#. => .
+..#.. => .
+#.... => .
+.##.# => #
+##### => #`; 
+	</script>
+</head>
+<body onload="calc()">
+  <div id="result"></div>  
+</body>
+</html>
