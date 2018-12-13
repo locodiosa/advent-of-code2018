@@ -6,435 +6,92 @@
 		"use strict";
     
     function calc() {
-      document.getElementById("result").innerHTML = getResult1() + ", " + getResult2(); 
+      document.getElementById("result").innerHTML = getResult(); 
     }     
 
-    function getResult1() {
+    function getResult() {
       let rows = input.split("\n").map(l => l.split(""));
+      let carts = [];
 
-      let carts = {};
-
-      for (let x = 0; x < rows.length; ++x) {
-        for (let y = 0; y < rows[x].length; ++y) {
-          
-          if (rows[x][y] == ">" || rows[x][y] == "<") {
-            carts[x + "," + y + "," + "1"] = rows[x][y];
-            rows[x][y] = "-";
-
-          } else if (rows[x][y] == "^" || rows[x][y] == "v") {
-            carts[x + "," + y + "," + "1"] = rows[x][y];
-            rows[x][y] = "|";
-          }
-        }
-      }
-
-      let tick = 0;
-
-      while (true) {
-        ++tick;
-        
-        for (let coord in carts) {
-          let newCoord = coord.split(",").map(Number);                   
-
-          if (carts[coord] == ">") { 
-            delete carts[coord];                       
-            ++newCoord[1];
-            let x = newCoord[0];
-            let y = newCoord[1];
-
-            for (let c in carts) {
-              if (newCoord[0] + "," + newCoord[1] + ",1" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",2" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",3" == c)
-              return y + "," + x;
-            }
+      for (let y = 0; y < rows.length; ++y) {
+        for (let x = 0; x < rows[y].length; ++x) {          
+          if (rows[y][x] == ">") {
+            let cart = {x: x, y: y, dx: 1, dy: 0, turn: 0, crash: false};
+            carts.push(cart);
             
-            coord = newCoord.join(",");          
-
-            if (rows[x][y] == "-") {
-              carts[coord] = ">";
-            } else if (rows[x][y] == "\\") {
-              carts[coord] = "v";
-            } else if (rows[x][y] == "/") {
-              carts[coord] = "^";
-
-            } else if (rows[x][y] == "+") {              
-              if (newCoord[2] == "1") {
-                newCoord[2] = "2";
-                coord = newCoord.join(",");
-                carts[coord] = "^";
-
-              } else if (newCoord[2] == "2") {
-                newCoord[2] = "3";
-                coord = newCoord.join(",");
-                carts[coord] = ">";
-              
-              } else if (newCoord[2] == "3") {
-                newCoord[2] = "1";
-                coord = newCoord.join(",");
-                carts[coord] = "v";
-              }              
-            }               
-          
-          } else if (carts[coord] == "v") { 
-            delete carts[coord];
-            ++newCoord[0];
-            let x = newCoord[0];
-            let y = newCoord[1];
-
-            for (let c in carts) {
-              if (newCoord[0] + "," + newCoord[1] + ",1" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",2" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",3" == c)
-              return y + "," + x;
-            }
-
-            coord = newCoord.join(",");            
-                        
-            if (rows[x][y] == "|") {
-              carts[coord] = "v";
-            } else if (rows[x][y] == "\\") {
-              carts[coord] = ">";
-            } else if (rows[x][y] == "/") {
-              carts[coord] = "<";
-              
-            } else if (rows[x][y] == "+") { 
-              if (newCoord[2] == "1") {
-                newCoord[2] = "2";
-                coord = newCoord.join(",");
-                carts[coord] = ">";
-                
-              } else if (newCoord[2] == "2") {
-                newCoord[2] = "3";
-                coord = newCoord.join(",");
-                carts[coord] = "v";
-              
-              } else if (newCoord[2] == "3") {
-                newCoord[2] = "1";
-                coord = newCoord.join(",");
-                carts[coord] = "<";
-              }              
-            }
-
-          } else if (carts[coord] == "<") { 
-            delete carts[coord];
-            --newCoord[1];
-            let x = newCoord[0];
-            let y = newCoord[1];
-
-            for (let c in carts) {
-              if (newCoord[0] + "," + newCoord[1] + ",1" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",2" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",3" == c)
-              return y + "," + x;
-            }
-
-            coord = newCoord.join(",");            
-                        
-            if (rows[x][y] == "-") {
-              carts[coord] = "<";
-            } else if (rows[x][y] == "\\") {
-              carts[coord] = "^";
-            } else if (rows[x][y] == "/") {
-              carts[coord] = "v";
-              
-            } else if (rows[x][y] == "+") { 
-              if (newCoord[2] == "1") {
-                newCoord[2] = "2";
-                coord = newCoord.join(",");
-                carts[coord] = "v";
-                
-              } else if (newCoord[2] == "2") {
-                newCoord[2] = "3";
-                coord = newCoord.join(",");
-                carts[coord] = "<";
-              
-              } else if (newCoord[2] == "3") {
-                newCoord[2] = "1";
-                coord = newCoord.join(",");
-                carts[coord] = "^";
-              }              
-            }
-
-          } else if (carts[coord] == "^") { 
-            delete carts[coord];
-            --newCoord[0];
-            let x = newCoord[0];
-            let y = newCoord[1];
-
-            for (let c in carts) {
-              if (newCoord[0] + "," + newCoord[1] + ",1" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",2" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",3" == c)
-              return y + "," + x;
-            }
-
-            coord = newCoord.join(",");            
-                        
-            if (rows[x][y] == "|") {
-              carts[coord] = "^";
-            } else if (rows[x][y] == "\\") {
-              carts[coord] = "<";
-            } else if (rows[x][y] == "/") {
-              carts[coord] = ">";
-              
-            } else if (rows[x][y] == "+") { 
-              if (newCoord[2] == "1") {
-                newCoord[2] = "2";
-                coord = newCoord.join(",");
-                carts[coord] = "<";
-                
-              } else if (newCoord[2] == "2") {
-                newCoord[2] = "3";
-                coord = newCoord.join(",");
-                carts[coord] = "^";
-              
-              } else if (newCoord[2] == "3") {
-                newCoord[2] = "1";
-                coord = newCoord.join(",");
-                carts[coord] = ">";
-              }              
-            } 
+          } else if (rows[y][x] == "<") {
+            let cart = {x: x, y: y, dx: -1, dy: 0, turn: 0, crash: false};
+            carts.push(cart);
+            
+          } else if (rows[y][x] == "^") {
+            let cart = {x: x, y: y, dx: 0, dy: -1, turn: 0, crash: false};
+            carts.push(cart);
           }
-        }
-      }      
-    } 
 
-    function getResult2() {
-      let rows = input.split("\n").map(l => l.split(""));
-
-      let carts = {};
-
-      for (let x = 0; x < rows.length; ++x) {
-        for (let y = 0; y < rows[x].length; ++y) {
-          
-          if (rows[x][y] == ">" || rows[x][y] == "<") {
-            carts[x + "," + y + "," + "1"] = rows[x][y];
-            rows[x][y] = "-";
-
-          } else if (rows[x][y] == "^" || rows[x][y] == "v") {
-            carts[x + "," + y + "," + "1"] = rows[x][y];
-            rows[x][y] = "|";
+          else if (rows[y][x] == "v") {
+            let cart = {x: x, y: y, dx: 0, dy: 1, turn: 0, crash: false};
+            carts.push(cart);
           }
         }
       }
 
-      console.log(Object.keys(carts).length);
-
-      let tick = 0;
-
-      while (Object.keys(carts).length >= 1) {        
-        ++tick;
+      let counter = carts.length;
+      let result = null;
+      let result2 = null;
+      
+      while (counter >= 1 && result2 == null) {
+        carts = carts.sort((a, b) => a.y != b.y ? a.y - b.y : a.x - b.x);
         
-        for (let coord in carts) {
-         let newCoord = coord.split(",").map(Number);                   
-
-          if (carts[coord] == ">") { 
-            delete carts[coord];                       
-            ++newCoord[1];
-            let x = newCoord[0];
-            let y = newCoord[1];
-
-            let crash = false;
-
-            for (let c in carts) {
-              if (newCoord[0] + "," + newCoord[1] + ",1" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",2" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",3" == c) {
-                console.log(c);
-                delete carts[c];
-                crash = true;
-              }
-            }
-
-            if (crash == false) {
-              coord = newCoord.join(",");          
-
-              if (rows[x][y] == "-") {
-                carts[coord] = ">";
-              } else if (rows[x][y] == "\\") {
-                carts[coord] = "v";
-              } else if (rows[x][y] == "/") {
-                carts[coord] = "^";
-
-              } else if (rows[x][y] == "+") {              
-                if (newCoord[2] == "1") {
-                  newCoord[2] = "2";
-                  coord = newCoord.join(",");
-                  carts[coord] = "^";
-
-                } else if (newCoord[2] == "2") {
-                  newCoord[2] = "3";
-                  coord = newCoord.join(",");
-                  carts[coord] = ">";
-                
-                } else if (newCoord[2] == "3") {
-                  newCoord[2] = "1";
-                  coord = newCoord.join(",");
-                  carts[coord] = "v";
-                }              
-              }        
-            }                   
-          
-          } else if (carts[coord] == "v") { 
-            delete carts[coord];
-            ++newCoord[0];
-            let x = newCoord[0];
-            let y = newCoord[1];
-
-            let crash = false;
-
-            for (let c in carts) {
-              if (newCoord[0] + "," + newCoord[1] + ",1" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",2" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",3" == c) {
-                console.log(c);
-                delete carts[c];
-                crash = true;
-              }
-            }
-
-            if (crash == false) {
-              coord = newCoord.join(",");            
-                          
-              if (rows[x][y] == "|") {
-                carts[coord] = "v";
-              } else if (rows[x][y] == "\\") {
-                carts[coord] = ">";
-              } else if (rows[x][y] == "/") {
-                carts[coord] = "<";
-                
-              } else if (rows[x][y] == "+") { 
-                if (newCoord[2] == "1") {
-                  newCoord[2] = "2";
-                  coord = newCoord.join(",");
-                  carts[coord] = ">";
-                  
-                } else if (newCoord[2] == "2") {
-                  newCoord[2] = "3";
-                  coord = newCoord.join(",");
-                  carts[coord] = "v";
-                
-                } else if (newCoord[2] == "3") {
-                  newCoord[2] = "1";
-                  coord = newCoord.join(",");
-                  carts[coord] = "<";
-                }              
-              }
-            }
-
-          } else if (carts[coord] == "<") { 
-            delete carts[coord];
-            --newCoord[1];
-            let x = newCoord[0];
-            let y = newCoord[1];
-
-            let crash = false;
-
-            for (let c in carts) {
-              if (newCoord[0] + "," + newCoord[1] + ",1" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",2" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",3" == c) {
-                console.log(c);
-                delete carts[c];
-                crash = true;
-              }
-            }
-
-            if (crash == false) {
-              coord = newCoord.join(",");            
-                          
-              if (rows[x][y] == "-") {
-                carts[coord] = "<";
-              } else if (rows[x][y] == "\\") {
-                carts[coord] = "^";
-              } else if (rows[x][y] == "/") {
-                carts[coord] = "v";
-                
-              } else if (rows[x][y] == "+") { 
-                if (newCoord[2] == "1") {
-                  newCoord[2] = "2";
-                  coord = newCoord.join(",");
-                  carts[coord] = "v";
-                  
-                } else if (newCoord[2] == "2") {
-                  newCoord[2] = "3";
-                  coord = newCoord.join(",");
-                  carts[coord] = "<";
-                
-                } else if (newCoord[2] == "3") {
-                  newCoord[2] = "1";
-                  coord = newCoord.join(",");
-                  carts[coord] = "^";
-                }              
-              }
-            }
-
-          } else if (carts[coord] == "^") { 
-            delete carts[coord];
-            --newCoord[0];
-            let x = newCoord[0];
-            let y = newCoord[1];
-
-            let crash = false;
-
-            for (let c in carts) {
-              if (newCoord[0] + "," + newCoord[1] + ",1" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",2" == c ||
-                  newCoord[0] + "," + newCoord[1] + ",3" == c) {
-                console.log(c);
-                delete carts[c];
-                crash = true;
-              }
-            }
-
-            if (crash == false) {
-              coord = newCoord.join(",");            
-                          
-              if (rows[x][y] == "|") {
-                carts[coord] = "^";
-              } else if (rows[x][y] == "\\") {
-                carts[coord] = "<";
-              } else if (rows[x][y] == "/") {
-                carts[coord] = ">";
-                
-              } else if (rows[x][y] == "+") { 
-                if (newCoord[2] == "1") {
-                  newCoord[2] = "2";
-                  coord = newCoord.join(",");
-                  carts[coord] = "<";
-                  
-                } else if (newCoord[2] == "2") {
-                  newCoord[2] = "3";
-                  coord = newCoord.join(",");
-                  carts[coord] = "^";
-                
-                } else if (newCoord[2] == "3") {
-                  newCoord[2] = "1";
-                  coord = newCoord.join(",");
-                  carts[coord] = ">";
-                }              
-              } 
-            }
-          }
+        if (counter == 1) {
+          result2 = carts.filter(c => c["crash"] == false);
+          result2 = result2[0]["x"] + "," + result2[0]["y"];
         }
 
-        if (Object.keys(carts).length == 1) {
-          console.log(carts);
-          return Object.keys(carts)[0].split(",")[1] + "," + Object.keys(carts)[0].split(",")[0];
-        }
-      }      
+        for (let i = 0; i < carts.length; ++i) {
+          if (carts[i].crash == false) {
+            carts[i].x += carts[i].dx;
+            carts[i].y += carts[i].dy;
+            
+            for (let j = 0; j < carts.length; ++j) {
+              if (i != j && carts[j].crash == false && 
+                  carts[i].x == carts[j].x && carts[i].y == carts[j].y) {
+                carts[i].crash = true;
+                carts[j].crash = true;
+                counter -= 2;
+
+                if (result == null) {
+                  result = carts[i].x + "," + carts[i].y;
+                }
+              }
+            }        
+
+            if (rows[carts[i].y][carts[i].x] == "\\") {
+              [carts[i].dx, carts[i].dy] = [carts[i].dy, carts[i].dx];
+
+            } else if (rows[carts[i].y][carts[i].x] == "/") {
+              [carts[i].dx, carts[i].dy] = [-carts[i].dy, -carts[i].dx];
+
+            } else if (rows[carts[i].y][carts[i].x] == "+") {              
+              if (carts[i].turn == 2) {
+                carts[i].turn = 0;
+                [carts[i].dx, carts[i].dy] = [-carts[i].dy, carts[i].dx]
+                
+              } else if (carts[i].turn == 0) {
+                ++carts[i].turn;
+                [carts[i].dx, carts[i].dy] = [carts[i].dy, -carts[i].dx]
+              
+              } else {
+                ++carts[i].turn;
+              }         
+            }          
+          }       
+        }      
+      }
+
+      return result + ", " + result2;
     } 
 
-const input = String.raw`/>-<\  
-|   |  
-| /<+-\
-| | | v
-\>+</ |
-  |   ^
-  \<->/`;
-
-const input1 = String.raw`                                          /---------------------------------------------------------------------------\                               
+const input = String.raw`                                          /---------------------------------------------------------------------------\                               
                                           |/--------------------------------------------------------------------------+--------------------------\    
         /----------------------\          ||                                        /---------------\                 |                          |    
         |             /--------+----------++---------------\                        |               |                 |                          |    
