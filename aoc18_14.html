@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script>
+		"use strict";
+    
+    function calc() {
+      document.getElementById("result").innerHTML = getResult(); 
+    }     
+
+    function getResult() {
+      let recipes = [3, 7];
+      let cur1 = 0;
+      let cur2 = 1;
+      let time = 0;
+      let result1 = null;
+      let result2 = null;
+
+      while (time < 25000000) {
+        ++time;
+
+        if (recipes.slice(-7).join("").indexOf(input) != -1) {
+          result2 = recipes.join("").indexOf(input);
+        }
+        
+        recipes.push(...(recipes[cur1] + recipes[cur2] + "").split("").map(Number));        
+        cur1 = (cur1 + recipes[cur1] + 1) % recipes.length;
+        cur2 = (cur2 + recipes[cur2] + 1) % recipes.length;
+
+        if (recipes.length >= +input + 10) {
+          result1 = recipes.slice(+input, +input + 10).join("");
+        }
+      }
+
+      return result1 + ", " + result2;
+    }  
+
+const input = "580741"; 
+	</script>
+</head>
+<body onload="calc()">
+  <div id="result"></div>  
+</body>
+</html>
