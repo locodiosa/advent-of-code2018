@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script>
+		"use strict";
+    
+    function calc() {
+      document.getElementById("result").innerHTML = getResult(); 
+    }    
+
+    function getResult() {
+      let area = input.split("\n").map(l => l.split("").map(e => (e == "G" || e == "E") ? [e, 200] : e));
+      let range = null;
+      
+      for (let y = 0; y < area.length; ++y) {
+        for (let x = 0; x < area.length; ++x) {
+          let unit = area[y][x];                 
+
+          if (unit[0] == "G" || unit[0] == "E") {         
+            let target = attack(area, x, y, (unit[0] == "E") ? "G" : "E");               
+
+            //////////////////attack//////////////////////
+
+            if (target != false) {
+              area[target[0]][target[1]][1] -= 3;
+
+              if (area[target[0]][target[1]][1] <= 0) {
+                area[target[0]][target[1]] = ".";
+              }
+
+            //////////////////wave////////////////////////
+            
+            } else {
+              let targetName = (unit[0] == "E") ? "G" : "E";                          
+              let way = 1000;
+              let rout = null;
+
+              for (let i = 0; i < area.length; ++i) {
+                for (let j = 0; j < area[i].length; ++j) {                  
+                  if (area[i][j][0] == targetName) {
+                    let numberOfWave = 0;
+                    let distance = [...area];
+                    let currentWave = [{x: null, y: null}];   
+
+                    currentWave[0].x = j;
+                    currentWave[0].y = i;
+                    distance[y][x] = ".";
+                    distance[i][j] = 0;
+
+                    let data = [numberOfWave, currentWave];
+
+                    while (distance[y][x] == ".") {
+                      data = doWave(data[0], distance, data[1]);
+                    }                    
+
+                    if (data[0] < way) {
+                      way = data[0];
+                      range = [i, j];
+                      rout = [...distance];
+                    }
+                  } 
+                }
+              }
+              console.log(range);               
+              console.log(way);
+              console.log(rout); 
+
+
+            }
+          }
+        }
+      }      
+
+      return null + ", " + null;
+    }  
+
+    function doWave(numberOfWave, area, currentWave) {
+      let newWave = [];     
+
+      currentWave.forEach(function(cell) {
+        if (area[cell.y - 1][cell.x] == ".") {
+          area[cell.y - 1][cell.x] = area[cell.y][cell.x] + 1;
+          newWave.push({x: cell.x, y: cell.y - 1});
+        }
+
+        if (area[cell.y + 1][cell.x] == ".") {
+          area[cell.y + 1][cell.x] = area[cell.y][cell.x] + 1;
+          newWave.push({x: cell.x, y: cell.y + 1});
+        }
+
+        if (area[cell.y][cell.x - 1] == ".") {
+          area[cell.y][cell.x - 1] = area[cell.y][cell.x] + 1;
+          newWave.push({x: cell.x - 1, y: cell.y});
+        }
+
+        if (area[cell.y][cell.x + 1] == ".") {
+          area[cell.y][cell.x + 1] = area[cell.y][cell.x] + 1;
+          newWave.push({x: cell.x + 1, y: cell.y});
+        }
+      });
+
+      currentWave = newWave; 
+
+      return [numberOfWave + 1, currentWave];
+    }
+
+    function attack(area, x, y, targetName) {
+      let min = 200;
+      let lowUnit = null;
+      
+      if (area[y + 1][x][0] == targetName) {
+        if (area[y + 1][x][1] <= min) {
+          min = area[y + 1][x][1];
+          lowUnit = [y + 1, x];
+        }
+      }
+
+      if (area[y][x - 1][0] == targetName) {
+        if (area[y][x - 1][1] <= min) {
+          min = area[y][x - 1][1];
+          lowUnit = [y, x - 1];
+        }
+      }
+
+      if (area[y][x + 1][0] == targetName) {
+        if (area[y][x + 1][1] <= min) {
+          min = area[y][x + 1][1];
+          lowUnit = [y, x + 1];
+        }
+      }
+    
+      if (area[y - 1][x][0] == targetName) {
+        if (area[y - 1][x][1] <= min) {
+          min = area[y - 1][x][1];
+          lowUnit = [y - 1, x];
+        }  
+      } 
+
+      return lowUnit != null ? lowUnit : false;    
+    }
+
+    const input = `#######
+#E....#
+#...#.#
+#G..#G#
+#######`;
+
+const input1 = `################################
+######......###...##..##########
+######....#G###G..##.G##########
+#####...G##.##.........#########
+##....##..#.##...........#######
+#....#G.......##.........G.#####
+##..##GG....G.................##
+##.......G............#.......##
+###.....G.....G#......E.......##
+##......##....................##
+#.....####......G.....#...######
+#.#########.G....G....#E.#######
+###########...#####......#######
+###########..#######..E.......##
+###########.#########......#.###
+########..#.#########.........##
+#######G....#########........###
+##.##.#.....#########...EE#..#.#
+#...GG......#########.#...##..E#
+##...#.......#######..#...#....#
+###.##........#####......##...##
+###.........................#..#
+####.............##........###.#
+####............##.........#####
+####..##....###.#...#.....######
+########....###..............###
+########..G...##.###...E...E.###
+#########...G.##.###.E....E.####
+#########...#.#######.......####
+#############..########...######
+##############.########.########
+################################`; 
+	</script>
+</head>
+<body onload="calc()">
+  <div id="result"></div>  
+</body>
+</html>
