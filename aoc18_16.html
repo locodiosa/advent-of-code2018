@@ -33,17 +33,7 @@
         }     
       }  
 
-      let finish = false;
-
-      while (finish == false) {
-        finish = true;
-
-        for (let c in opcodes) {
-          if (opcodes[c].length != 1) {
-            finish = false;
-          } 
-        }
-
+      while (!Object.values(opcodes).every(o => o.length == 1)) {
         for (let i in opcodes) {
           if (opcodes[i].length == 1) {
             for (let j in opcodes) {            
